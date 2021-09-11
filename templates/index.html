@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>상품 판매 사이트</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Stylish&display=swap" rel="stylesheet">
+</head>
+<style>
+ *{
+    font-family: 'Stylish', sans-serif;
+    }
+ .wrap{
+     width:500px;
+     margin:auto;
+ }
+ .price{
+     font-size: 15px;
+ }
+ .item-line{
+     width:500px;
+ }
+ .order-info{
+     width:500px;
+     argin-bottoms:50px;
+ }
+</style>
+<script>
+        $(document).ready(function(){
+	q1();
+	show_order();
+});
+        function show_order(){
+         $.ajax({
+                    type: "GET",
+                    url: "/order",
+                    data: {},
+                    success: function (response) {
+                        if(response["result"]=="success") {
+                            let sell = response['orders']
+                            for (let i = 0; i < sell.length; i++) {
+                                let name = sell[i]['name']
+                                let option = sell[i]['option']
+                                let number = sell[i]['number']
+                                let call = sell[i]['call']
+
+                                let temp_html = `<tr>
+                                                <th scope="row">${name}</th>
+                                                <td>${option}</td>
+                                                <td>${number}</td>
+                                                <td>${call}</td></tr>`
+                                $('#orders-box').append(temp_html)
+                            }
+                        }
+                    }
+                })
+            }
+
+     function q1() {
+
+            $.ajax({
+                type: "GET",
+                url: "http://spartacodingclub.shop/sparta_api/rate",
+                data: {},
+                success: function (response) {
+                    let rows = response['rate'];
+                    $('#q1-price').text(rows+' / 달러-원 환율');
+
+
+                }
+
+            })
+        }
+        function order(){
+        let name=$('#order-name').val();
+        let option=$('#order-option').val();
+        let number=$('#order-number').val();
+        let call=$('#order-call').val();
+
+         $.ajax({
+                    type: "POST",
+                    url: "/order",
+                    data: {name_give: name,option_give:option,number_give:number,call_give:call},
+                    success: function (response) {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                })
+        }
+
+
+</script>
+
+<body>
+<div class="wrap">
+<img class="card-img-top" src="http://gdimg.gmarket.co.kr/1159210155/still/600?ver=1510293353" alt="Card image cap">
+   <div class="item-line">
+    <h1>귀여운 곰 인형을 팝니다. <span class="price" >가격:1,0000원/개</span></h1>
+       <p class="rate"><span id="q1-price">1000</span></p>
+    <p>미니소에서 팔고 있는 귀여운 곰 인형이에요. 카카오톡 선물하기에도 이렇게 생긴 곰인형이 많더라구요. 제 애착인형이에요.</p>
+   </div>
+
+
+<div class="order-info">
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" >주문자 이름</span>
+  </div>
+  <input id="order-name" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+</div>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <label class="input-group-text" for="inputGroupSelect01">옵션</label>
+  </div>
+  <select id="order-option" class="custom-select" >
+    <option selected>--옵션을 선택하세요--</option>
+    <option value="1">브라운 베어</option>
+    <option value="2">허니 베어</option>
+    <option value="3">블랙 베어</option>
+  </select>
+</div>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+  </div>
+  <select class="custom-select" id="inputGroupSelect01">
+    <option id="order-number" selected>--수량을 선택하세요--</option>
+    <option value="1">1개</option>
+    <option value="2">2개</option>
+    <option value="3">3개</option>
+  </select>
+</div>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" >전화번호</span>
+  </div>
+  <input id="order-call" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+
+        <button type="button" onclick="order()" class="btn btn-outline-info">주문하기</button>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">이름</th>
+        <th scope="col">종류</th>
+        <th scope="col">수량</th>
+        <th scope="col">전화번호</th>
+    </tr>
+    </thead>
+    <tbody id="orders-box">
+
+    </tbody>
+</table>
+</div>
+
+
+
+</body>
+
+</html>
